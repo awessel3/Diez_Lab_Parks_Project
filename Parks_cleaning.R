@@ -3,8 +3,8 @@ library(ggplot2)
 
 setwd("Desktop/Diez Lab")
 
-SEM <-read.csv("SEM_neighborhoods.csv")
-RF <- read.csv("RF_neighborhoods.csv")
+SEM <-read.csv("Data/SEM_neighborhoods.csv")
+RF <- read.csv("Data/RF_neighborhoods.csv")
 dim(SEM)
 dim(RF)
 
