@@ -234,10 +234,10 @@ ggplot(diverse_pheno_sum_24) +
     x = "Day of Year",
     y = "Species",
     color = "Phenophase",
-    title = "Flowering & Fruiting Periods"
+    title = "Flowering and Fruiting Periods"
   ) +
   theme_minimal()
-2
+
 ggplot(diverse_pheno_sum_24) +
   geom_segment(aes(
     x = onset_fl, xend = offset_fl,

@@ -112,7 +112,7 @@ ggplot(navsqu_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point()
 plafig_prop <- value_prop %>% filter(SPECIES == 'PLAFIG') %>% na.omit()
 
 ggplot(plafig_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
-  facet_wrap(~PARK) + labs(title = 'NAVSQU Phenophases over Time',
+  facet_wrap(~PARK) + labs(title = 'PLAFIG Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal() + 
   scale_color_manual(values = phase_colors)
 
@@ -181,7 +181,7 @@ ggplot(navsqu_phase, aes(x = Date, y = Value, color = Phenophase)) + geom_point(
 plafig_phase <- diverse_phase %>% filter(SPECIES == 'PLAFIG') %>% na.omit()
 
 ggplot(plafig_phase, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
-  facet_wrap(~PARK) + labs(title = 'NAVSQU Diverse Phenophases over Time',
+  facet_wrap(~PARK) + labs(title = 'PLAFIG Diverse Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal() + 
   scale_color_manual(values = phase_colors)
 
