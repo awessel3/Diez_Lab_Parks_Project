@@ -3,6 +3,7 @@ library(lubridate)
 library(patchwork)
 
 setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project")
+setwd("~/Desktop/Diez_Lab_Parks_Project/")
 
 neighbor_fitness <- read_rds("Data/2025/25_neighbor_fitness.rds")
 
