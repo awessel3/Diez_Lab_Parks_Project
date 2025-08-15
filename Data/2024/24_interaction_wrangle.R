@@ -72,10 +72,18 @@ mia_coef_wir$PARK <- "WIR"
 competitors_natives <- colnames(mia_coef_br[, 2:9])
 
 mia_coef <- bind_rows(mia_coef_br, mia_coef_rf, mia_coef_sem, mia_coef_wir)
-mia_coef <- mia_coef %>% dplyr::select(all_of(competitors_natives), PARK)
+mia_coef <- mia_coef %>% dplyr::select(all_of(colnames(mia_coef_br[, 1:9])), PARK) %>% 
+  rename(SPECIES = RowNames)
 
-coef_pheno <- left_join(pheno_sum_24, mia_coef, by = c("PARK"), relationship = "many-to-many")
+pheno_sum_24 <- unique(pheno_sum_24)
 
-wir_coef_pheno <- coef_pheno %>% filter(PARK == "WIR")
-ggplot(wir_coef_pheno, aes(x = onset_fl, y = CLAPUR)) + geom_point()
+coef_pheno <- left_join(pheno_sum_24, mia_coef, by = c("PARK", "SPECIES"), relationship = "many-to-many")
 
+coef_pheno <- coef_pheno %>% pivot_longer(cols = all_of(competitors_natives), 
+                                          names_to = "competitors",
+                                          values_to = "coef")
+
+
+#wir_coef_pheno <- coef_pheno %>% filter(PARK == "WIR")
+ggplot(coef_pheno, aes(x = onset_fl, y = coef, color = competitors)) + geom_point() +
+  geom_hline(yintercept = 0) + facet_wrap(~PARK) + geom_smooth(method = 'lm', se = FALSE)
