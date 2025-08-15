@@ -37,15 +37,15 @@ for (nativex in all_of(competitors)) {
     comp_plot <- ggplot(native_comp, aes(x = .data[[nativey]], y = FINALSEED, color = PARK)) + 
       geom_point() + geom_smooth() +
       facet_wrap(~PARK, scale = 'free') + 
-      scale_color_manual(values = park_colors)
-      labs(title = sprintf("Fecundity of %s Against %s Density", nativex, nativey)) + theme_minimal()
+      scale_color_manual(values = park_colors) + theme_minimal()
     
     #save plot 
     plot_total <- plot_total + 1
     all_comp[[length(all_comp) + 1]] <- comp_plot
     
   }
-  wrapped <- wrap_plots(all_comp, nrow = 2)
+  wrapped <- wrap_plots(all_comp, nrow = 2) + 
+    plot_annotation(sprintf("Fecundity of %s Against Competitors", nativex))
   ggsave(sprintf("figures/comp_figs/comp_plot_%s.jpeg", nativex), 
          wrapped, width = 25, height = 12, dpi = 300)
 } 
