@@ -276,7 +276,7 @@ ggplot(diverse_onset_24, aes(x = onset, y = SPECIES, fill = PARK)) + geom_col(po
 diverse_offset_24 <- diverse_offset_24 %>%
   mutate(Date = as.Date(offset - 1, origin = as.Date("2024-01-01")))
 
-
+saveRDS(diverse_pheno_sum_24, "diverse_phenology_summary_24.rds")
 
 
 

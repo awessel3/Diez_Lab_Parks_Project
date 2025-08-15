@@ -57,4 +57,25 @@ neighbor_fitness <- neighbor_fitness %>%
 
 saveRDS(neighbor_fitness, "24_neighbor_fitness.rds")
 
+mia_coef_br <- read.csv("mean_interaction_matrix_br.csv")
+mia_coef_rf <- read.csv("mean_interaction_matrix_rf.csv")
+mia_coef_sem <- read.csv("mean_interaction_matrix_sem.csv")
+mia_coef_wir <- read.csv("mean_interaction_matrix_wir.csv")
+
+pheno_sum_24 <- read_rds("diverse_phenology_summary_24.rds")
+
+mia_coef_br$PARK <- "BR"
+mia_coef_rf$PARK <- "RF"
+mia_coef_sem$PARK <- "SEM"
+mia_coef_wir$PARK <- "WIR"
+
+competitors_natives <- colnames(mia_coef_br[, 2:9])
+
+mia_coef <- bind_rows(mia_coef_br, mia_coef_rf, mia_coef_sem, mia_coef_wir)
+mia_coef <- mia_coef %>% dplyr::select(all_of(competitors_natives), PARK)
+
+coef_pheno <- left_join(pheno_sum_24, mia_coef, by = c("PARK"), relationship = "many-to-many")
+
+wir_coef_pheno <- coef_pheno %>% filter(PARK == "WIR")
+ggplot(wir_coef_pheno, aes(x = onset_fl, y = CLAPUR)) + geom_point()
 
