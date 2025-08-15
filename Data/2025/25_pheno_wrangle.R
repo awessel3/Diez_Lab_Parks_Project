@@ -5,6 +5,7 @@ setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project")
 
 pheno_25 <- read.csv("Data/2025/25_phenology.csv")
 
+
 park_colors <- c(
   "BR"  = "#955F8E",  # red
   "RF"  = "#0F9554",  # green
@@ -50,19 +51,36 @@ new_rows_diverse <- expand_grid(
 
 diverse_25 <- bind_rows(diverse_25, new_rows_diverse)
 
-onset <- alones_25 %>% 
+onset_alone <- alones_25 %>% 
   filter(Value != 0 & Phenophase == "FL") %>%
   group_by(PARK, SPECIES) %>%
   summarise(onset = min(doy))
   
-ggplot(onset, aes(x = onset, y = SPECIES, fill = PARK)) +
+ggplot(onset_alone, aes(x = onset, y = SPECIES, fill = PARK)) +
   geom_col(position = "dodge") +
   scale_fill_manual(values = park_colors) +
   labs(
     x = "Onset (Day of Year)",
     y = "Species",
-    title = "Onset Timing by Species and Park"
+    title = "Onset Timing 2025 Alones"
   ) +
   theme_minimal() 
 
-#July29 - last day of BR data collection (end day for EPIDEN and NAVSQU)
+onset_diverse <- diverse_25 %>% 
+  filter(Value != 0 & Phenophase == "FL") %>%
+  group_by(PARK, SPECIES) %>%
+  summarise(onset = min(doy))
+
+ggplot(onset_diverse, aes(x=onset, y=SPECIES, fill = PARK)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values = park_colors) +
+  labs(
+    x = "Onset (Day of Year)",
+    y = "Species",
+    title = "Onset Timing 2025 Diverse"
+  ) +
+  theme_minimal() 
+
+#Can't use NAVSQU for onset in diverse
+
+#July29 - last day of BR data collection (end day for EPIDEN, NAVSQU, GILCAP)

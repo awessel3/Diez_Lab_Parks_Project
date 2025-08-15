@@ -7,6 +7,8 @@ library(raster)
 library(ggplot2)
 library(ggeffects)
 
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/Data/2024")
+
 pheno_24_alone <- read_rds("pheno_24_alone.rds")
 pheno_24_diverse <- read_rds("pheno_24_diverse.rds")
 
@@ -14,12 +16,13 @@ colnames(pheno_24_alone)
 
 
 park_colors <- c(
-  "BR"  = "#955F8E",  # red
-  "RF"  = "#0F9554",  # green
-  "WIR" = "#17BEBB",  # blue
-  "SEM" = "#F5BB00"   # yellow
+  "BR"  = "#D81E5B",  # red
+  "RF"  = "#7DCE82",  # green
+  "WIR" = "#0496FF",  # blue
+  "SEM" = "#F18F01"   # yellow
 )
 
+#PHENOPHASE SUMMARIES ----
 # alone
 alone_phase <- pheno_24_alone %>% pivot_wider(names_from = Phenophase, values_from = Value)
 
@@ -185,66 +188,16 @@ ggplot(plafig_phase, aes(x = Date, y = Value, color = Phenophase)) + geom_point(
                            y = 'Proportion in Phase') + theme_minimal() + 
   scale_color_manual(values = phase_colors)
 
-## Overlap
 
-diverse_pheno_sum_24 <- read_rds("diverse_phenology_summary_24.rds")
 
-ggplot(diverse_pheno_sum_24) +
-  geom_segment(aes(
-    x = onset_fl, xend = offset_fl,
-    y = SPECIES, yend = SPECIES,
-    color = "FL"
-  ), size = 3) +
-  geom_segment(aes(
-    x = onset_fr, xend = offset_fr,
-    y = SPECIES, yend = SPECIES,
-    color = "FR"
-  ), size = 3, alpha = 0.6) +
-  scale_color_manual(values = c("FL" = "#17BEBB", "FR" = "#F5BB00")) +
-  facet_wrap(~PARK) +
-  labs(
-    x = "Day of Year",
-    y = "Species",
-    color = "Phenophase",
-    title = "Flowering and Fruiting Periods"
-  ) +
-  theme_minimal()
+#ONSET FECUNDITY ----
+fitness_24 <- read.csv("24_fitness.csv") %>%
+   select(1:18) %>%
+   rename(c(PLOT_TYPE = PLOT, 
+            PLOT = PLOT.1)) %>%
+   filter(!grepl("gone", NOTES, ignore.case = TRUE))
 
-ggplot(diverse_pheno_sum_24) +
-  geom_segment(aes(
-    x = onset_fl, xend = offset_fl,
-    y = PARK, yend = PARK,
-    color = "FL"
-  ), size = 3) +
-  geom_segment(aes(
-    x = onset_fr, xend = offset_fr,
-    y = PARK, yend = PARK,
-    color = "FR"
-  ), size = 3, alpha = 0.6) +
-  scale_color_manual(values = c("FL" = "#17BEBB", "FR" = "#F5BB00")) +
-  facet_wrap(~SPECIES) +
-  labs(
-    x = "Day of Year",
-    y = "Species",
-    color = "Phenophase",
-    title = "Flowering & Fruiting Periods"
-  ) +
-  theme_minimal()
-
-park_colors <- c(
-  "BR"  = "#955F8E",  
-  "RF"  = "#0F9554", 
-  "WIR" = "#17BEBB",  
-  "SEM" = "#F5BB00"   
-)
-
-# alone
-ggplot(alone_onset_24, aes(x = onset, y = SPECIES, fill = PARK)) + geom_col(position = 'dodge') +
-  theme_minimal() + scale_fill_manual(values = park_colors)
-
-# diverse 
-ggplot(diverse_onset_24, aes(x = onset, y = SPECIES, fill = PARK)) + geom_col(position = 'dodge') +
-  theme_minimal() + scale_fill_manual(values = park_colors) + labs(title = 'diverse')
-diverse_offset_24 <- diverse_offset_24 %>%
-  mutate(Date = as.Date(offset - 1, origin = as.Date("2024-01-01")))
-
+ff_heights_24 <- read.csv("Data/2025/25_ff_heights.csv") %>% 
+  select(1:10) %>%
+  rename(c(PLOT_TYPE = PLOT, 
+           FFHEIGHT = HEIGHT)) 
