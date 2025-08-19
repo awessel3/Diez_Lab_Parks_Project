@@ -32,13 +32,35 @@ fitness_25 <- read.csv("Data/2025/25_fitness.csv") %>%
   select(1:16) %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1)) %>%
-  filter(!grepl("gone", NOTES, ignore.case = TRUE))
+  filter(!grepl("gone", NOTES, ignore.case = TRUE)) %>%
+  drop_na(HEIGHT)
 
-join <- left_join(fitness_25, neighbors_25, relationship = "many-to-many") %>%
-  drop_na(FINALSEED)
+# alones_fitness <- fitness_25 %>%
+#   filter(PLOT_TYPE == "ALONE")
+# 
+# diverse_fitness <- fitness_25 %>%
+#   filter(PLOT_TYPE == "DIVERSE") %>%
+#   drop_na(HEIGHT, FINALFR)
 
-dim(fitness_25)
-dim(join)
-join
+neighbor_fitness <- left_join(fitness_25, 
+                              neighbors_25, 
+                              by = c("PARK", "PLOT_TYPE", "PLOT", "SUBPLOT"), 
+                              relationship = "many-to-many") %>%
+  drop_na(FINALSEED) %>%
+  select(-NOTES, -contains("INFL"), -contains("FR")) %>%
+  mutate(PLOT = if_else(PLOT_TYPE == "ALONE", 0L, PLOT))
+
+neighbor_fitness[, 10:ncol(neighbor_fitness)][is.na(neighbor_fitness[, 10:ncol(neighbor_fitness)])] <- 0
+
+neighbor_fitness$comp_density <- rowSums(neighbor_fitness[, 10:ncol(neighbor_fitness)])
+
+neighbor_fitness <- neighbor_fitness %>% 
+  filter(!(PLOT_TYPE == "DIVERSE" & comp_density == 0)) %>%
+  mutate(comp_density = case_when(PLOT_TYPE == "DIVERSE" ~ comp_density - 1,
+                                  TRUE ~ comp_density))
+
+saveRDS(neighbor_fitness, file = "Data/2025/25_neighbor_fitness.rds")
+
+
 
 

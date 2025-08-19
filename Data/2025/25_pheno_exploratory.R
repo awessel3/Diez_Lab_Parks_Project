@@ -9,10 +9,10 @@ fitness_25 <- read.csv("Data/2025/25_fitness.csv") %>%
            PLOT = PLOT.1)) %>%
   filter(!grepl("gone", NOTES, ignore.case = TRUE))
 
-ff_heights_25 <- read.csv("Data/2025/25_ff_heights.csv") %>% 
-  select(1:10) %>%
-  rename(c(PLOT_TYPE = PLOT, 
-         FFHEIGHT = HEIGHT)) 
+ff_heights_25 <- read.csv("Data/2025/25_ff_heights.csv")
+#   select(1:10) %>%
+#   rename(c(PLOT_TYPE = PLOT, 
+#          FFHEIGHT = HEIGHT)) 
 
 park_colors <- c(
   "BR"  = "#D81E5B",  # red

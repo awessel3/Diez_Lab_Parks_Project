@@ -3,10 +3,12 @@ library(ggplot2)
 
 setwd("Desktop/Diez Lab")
 
-SEM <-read.csv("Data/SEM_neighborhoods.csv")
-RF <- read.csv("Data/RF_neighborhoods.csv")
+SEM <-read.csv("Data/2025/25_neighbors_sem.csv")
+RF <- read.csv("Data/2025/25_neighbors_rf.csv")
+WIR <- read.csv("Data/2025/25_neighbors_wir.csv")
 dim(SEM)
 dim(RF)
+dim(WIR)
 
 str(rf)
 colnames(SEM)
@@ -58,8 +60,16 @@ ratingToStemcount <- function(df) {
 test.RF <- removeChr(test.RF)
 test.RF$GALAPA
 
+RF <- removeChr(RF)
+SEM <- removeChr(SEM)
+WIR <- removeChr(WIR)
+
 test.SEM <- ratingToStemcount(test.SEM)
 test.RF <- ratingToStemcount(test.RF)
+
+SEM <- ratingToStemcount(SEM)
+RF <- ratingToStemcount(RF)
+WIR <- ratingToStemcount(WIR)
 
 RF$GALAPA
 test.RF$GALAPA
@@ -69,3 +79,7 @@ test.SEM$SHEARV
 
 SEM$GALAPA
 test.SEM$GALAPA
+
+write_csv(SEM, "Data/2025/25_neighbors_sem.csv")
+write_csv(RF, "Data/2025/25_neighbors_rf.csv")
+write_csv(WIR, "Data/2025/25_neighbors_wir.csv")

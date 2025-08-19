@@ -7,6 +7,7 @@ library(raster)
 library(ggplot2)
 library(ggeffects)
 
+#Hailey file path
 setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/Data/2024")
 
 pheno_24_alone <- read_rds("pheno_24_alone.rds")
@@ -260,7 +261,6 @@ fitness_24 <- read.csv("24_fitness.csv") %>%
             PLOT = PLOT.1)) %>%
    filter(!grepl("gone", NOTES, ignore.case = TRUE))
 
-ff_heights_24 <- read.csv("Data/2025/25_ff_heights.csv") %>% 
-  select(1:10) %>%
-  rename(c(PLOT_TYPE = PLOT, 
-           FFHEIGHT = HEIGHT)) 
+ff_heights_24 <- read.csv("24_ff_heights.csv") %>%
+   rename(c(PLOT_TYPE = PLOT, 
+            FFHEIGHT = HEIGHT)) 
