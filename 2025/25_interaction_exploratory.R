@@ -2,10 +2,10 @@ library(tidyverse)
 library(lubridate)
 library(patchwork)
 
-setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project")
-setwd("~/Desktop/Diez_Lab_Parks_Project/")
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/2025/data")
+setwd("~/Desktop/Diez_Lab_Parks_Project/2025/data")
 
-neighbor_fitness <- read_rds("Data/2025/25_neighbor_fitness.rds")
+neighbor_fitness <- read_rds("25_neighbor_fitness.rds")
 
 park_colors <- c(
   "BR"  = "#D81E5B",  # red
@@ -152,7 +152,7 @@ for (native1 in natives){
     plot_layout(guides = "collect") & theme(legend.position = "bottom", strip.text = element_text(size = 10))
     
   
-  ggsave(sprintf("Data/2025/figures/25_comp_%s.jpeg", native1), all_plots, width = 15, height = 10, dpi = 300)
+  ggsave(sprintf("../figures/25_comp_%s.jpeg", native1), all_plots, width = 15, height = 10, dpi = 300)
 }
 
 

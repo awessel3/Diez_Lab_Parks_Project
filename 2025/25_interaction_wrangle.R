@@ -1,21 +1,21 @@
 library(tidyverse)
 library(lubridate)
 
-setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project")
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/2025/data")
 
-br_neighbors <- read.csv("Data/2025/25_neighbors_br.csv") %>%
+br_neighbors <- read.csv("25_neighbors_br.csv") %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1)) %>%
   select(-NOTES)
-rf_neighbors <- read.csv("Data/2025/25_neighbors_rf.csv") %>%
+rf_neighbors <- read.csv("25_neighbors_rf.csv") %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1)) %>%
   select(-NOTES)
-sem_neighbors <- read.csv("Data/2025/25_neighbors_sem.csv") %>%
+sem_neighbors <- read.csv("25_neighbors_sem.csv") %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1)) %>%
   select(-NOTES)
-wir_neighbors <- read.csv("Data/2025/25_neighbors_wir.csv") %>%
+wir_neighbors <- read.csv("25_neighbors_wir.csv") %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1)) %>%
   select(-NOTES)
@@ -28,7 +28,7 @@ colnames(wir_neighbors)
 neighbors_25 <- bind_rows(br_neighbors, rf_neighbors, sem_neighbors, wir_neighbors) %>%
   rename(AGRCAP = agrostis.spp)
 
-fitness_25 <- read.csv("Data/2025/25_fitness.csv") %>% 
+fitness_25 <- read.csv("25_fitness.csv") %>% 
   select(1:16) %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1)) %>%
@@ -59,7 +59,7 @@ neighbor_fitness <- neighbor_fitness %>%
   mutate(comp_density = case_when(PLOT_TYPE == "DIVERSE" ~ comp_density - 1,
                                   TRUE ~ comp_density))
 
-saveRDS(neighbor_fitness, file = "Data/2025/25_neighbor_fitness.rds")
+saveRDS(neighbor_fitness, file = "25_neighbor_fitness.rds")
 
 
 

@@ -1,9 +1,9 @@
 library(tidyverse)
 library(lubridate)
 
-setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project")
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/2025/data")
 
-pheno_25 <- read.csv("Data/2025/25_phenology.csv")
+pheno_25 <- read.csv("25_phenology.csv")
 
 
 park_colors <- c(

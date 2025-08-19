@@ -3,13 +3,15 @@ library(lme4)
 library(janitor)
 library(writexl)
 
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/plec_model")
+
 #load data ----
-drought_plec <- read.csv("LAB/data/PLEC_drought.csv")
+drought_plec <- read.csv("data/PLEC_drought.csv")
 
-alones <- read.csv("LAB/data/alone focals 2024.csv") %>% select(1:16)
-diverse <- read.csv("LAB/data/diverse focals 2024.csv") %>% select(1:16)
+alones <- read.csv("data/alone focals 2024.csv") %>% select(1:16)
+diverse <- read.csv("data/diverse focals 2024.csv") %>% select(1:16)
 
-fitness_2025 <- read.csv("LAB/data/parks fitness 2025.csv") %>% select(1:16) %>%
+fitness_2025 <- read.csv("data/parks fitness 2025.csv") %>% select(1:16) %>%
   rename(c(PLOT_TYPE = PLOT, 
            PLOT = PLOT.1))
   
@@ -216,7 +218,7 @@ PLEC_parks_2024 <- PLEC_parks_2024 %>%
            m_avg_seed*TOTAL_MID_INFL +
            l_avg_seed*TOTAL_LARGE_INFL)
 
-write_xlsx(PLEC_parks_2024, "LAB/data/parks_plec_2024.xlsx")
+write_xlsx(PLEC_parks_2024, "data/parks_plec_2024.xlsx")
 
 ## 2025 ----
 PLEC_parks_2025 <- PLEC_parks_2025 %>% 
@@ -225,5 +227,5 @@ PLEC_parks_2025 <- PLEC_parks_2025 %>%
            m_avg_seed*TOTAL_MID_INFL +
            l_avg_seed*TOTAL_LARGE_INFL)
 
-write_xlsx(PLEC_parks_2025, "LAB/data/parks_plec_2025.xlsx")
+write_xlsx(PLEC_parks_2025, "data/parks_plec_2025.xlsx")
 

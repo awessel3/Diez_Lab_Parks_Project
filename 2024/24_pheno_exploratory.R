@@ -1,21 +1,23 @@
-library(tidyverse)
 library(lubridate)
+library(tidyverse)
+library(neonUtilities)
+library(patchwork)
+library(sp)
+library(raster)
+library(ggplot2)
+library(ggeffects)
 
-setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project")
+#Hailey file path
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/Data/2024")
 
-fitness_25 <- read.csv("Data/2025/25_fitness.csv") %>% 
-  select(1:16) %>%
-  rename(c(PLOT_TYPE = PLOT, 
-           PLOT = PLOT.1)) %>%
-  filter(!grepl("gone", NOTES, ignore.case = TRUE))
+pheno_24_alone <- read_rds("pheno_24_alone.rds")
+pheno_24_diverse <- read_rds("pheno_24_diverse.rds")
 
-ff_heights_25 <- read.csv("Data/2025/25_ff_heights.csv") %>%
-   select(1:10) %>%
-   rename(c(PLOT_TYPE = PLOT, 
-          FFHEIGHT = HEIGHT)) 
+alone_onset_24 <- readRDS("alone_onset_24.rds")
+diverse_onset_24 <- readRDS("diverse_onset_24.rds")
 
-pheno_25_alone <- read_rds("Data/2025/pheno_25_alone.rds")
-pheno_25_diverse <- read_rds("Data/2025/pheno_25_diverse.rds")
+colnames(pheno_24_alone)
+
 
 park_colors <- c(
   "BR"  = "#D81E5B",  # red
@@ -24,24 +26,9 @@ park_colors <- c(
   "SEM" = "#F18F01"   # yellow
 )
 
-prop_colors <- c(
-  "B_prop"  = "#0AA5FF",  
-  "V_prop"  = "#0FBD77",  
-  "FR_prop" = "#E0CA3C",  
-  "FL_prop" = "#D683D8"  
-)
-
-phase_colors <- c(
-  "B"  = "#0AA5FF",  
-  "V"  = "#0FBD77",  
-  "FR" = "#E0CA3C",  
-  "FL" = "#D683D8"  
-)
-
 #PHENOPHASE SUMMARIES ----
-
 # alone
-alone_phase <- pheno_25_alone %>% pivot_wider(names_from = Phenophase, values_from = Value)
+alone_phase <- pheno_24_alone %>% pivot_wider(names_from = Phenophase, values_from = Value)
 
 phenophase_cols <- c("B","V","FL","FR")
 alone_phase[phenophase_cols] <- lapply(alone_phase[phenophase_cols], function(x) sapply(x, `[`, 1))
@@ -68,9 +55,15 @@ value_prop <- value_prop %>%
                names_to = "Phenophase",
                values_to = "Value")
 
-#flowering curves
 ggplot(alone_phase, aes(x = Date, y = FL)) + geom_point() + geom_smooth() +
   facet_wrap(~SPECIES)
+
+phase_colors <- c(
+  "B_prop"  = "#0AA5FF",  
+  "V_prop"  = "#0FBD77",  
+  "FR_prop" = "#E0CA3C",  
+  "FL_prop" = "#D683D8"  
+)
 
 #CLAPUR 
 clapur_prop <- value_prop %>% filter(SPECIES == 'CLAPUR')
@@ -78,7 +71,7 @@ clapur_prop <- value_prop %>% filter(SPECIES == 'CLAPUR')
 ggplot(clapur_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'CLAPUR Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal() + 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
 #COLLOM
 collom_prop <- value_prop %>% filter(SPECIES == 'COLLOM')
@@ -86,7 +79,7 @@ collom_prop <- value_prop %>% filter(SPECIES == 'COLLOM')
 ggplot(collom_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'COLLOM Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal() + 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
 #COLLIN
 collin_prop <- value_prop %>% filter(SPECIES == 'COLLIN') %>% 
@@ -95,7 +88,7 @@ collin_prop <- value_prop %>% filter(SPECIES == 'COLLIN') %>%
 ggplot(collin_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'COLLIN Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal()+ 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
 #GILCAP
 gilcap_prop <- value_prop %>% filter(SPECIES == 'GILCAP')
@@ -103,7 +96,7 @@ gilcap_prop <- value_prop %>% filter(SPECIES == 'GILCAP')
 ggplot(gilcap_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'GILCAP Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal()+ 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
 #PLECON
 plecon_prop <- value_prop %>% filter(SPECIES == 'PLECON') %>% 
@@ -112,7 +105,7 @@ plecon_prop <- value_prop %>% filter(SPECIES == 'PLECON') %>%
 ggplot(plecon_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'PLECON Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal()+ 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
 #NAVSQU
 navsqu_prop <- value_prop %>% filter(SPECIES == 'NAVSQU')
@@ -120,7 +113,7 @@ navsqu_prop <- value_prop %>% filter(SPECIES == 'NAVSQU')
 ggplot(navsqu_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'NAVSQU Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal() + 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
 #PLAFIG
 plafig_prop <- value_prop %>% filter(SPECIES == 'PLAFIG') %>% na.omit()
@@ -128,20 +121,18 @@ plafig_prop <- value_prop %>% filter(SPECIES == 'PLAFIG') %>% na.omit()
 ggplot(plafig_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
   facet_wrap(~PARK) + labs(title = 'PLAFIG Phenophases over Time',
                            y = 'Proportion in Phase') + theme_minimal() + 
-  scale_color_manual(values = prop_colors)
+  scale_color_manual(values = phase_colors)
 
-#EPIDEN
-epiden_prop <- value_prop %>% filter(SPECIES == 'EPIDEN')
+# diverse
+  
+diverse_phase <- pheno_24_diverse 
 
-ggplot(epiden_prop, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
-  facet_wrap(~PARK) + labs(title = 'EPIDEN Phenophases over Time',
-                           y = 'Proportion in Phase') + theme_minimal() + 
-  scale_color_manual(values = prop_colors)
-
-
-
-#diverse
-diverse_phase <- pheno_25_diverse 
+phase_colors <- c(
+  "B"  = "#0AA5FF",  
+  "V"  = "#0FBD77",  
+  "FR" = "#E0CA3C",  
+  "FL" = "#D683D8"  
+)
 
 #CLAPUR 
 clapur_phase <- diverse_phase %>% filter(SPECIES == 'CLAPUR')
@@ -201,59 +192,102 @@ ggplot(plafig_phase, aes(x = Date, y = Value, color = Phenophase)) + geom_point(
                            y = 'Proportion in Phase') + theme_minimal() + 
   scale_color_manual(values = phase_colors)
 
-#EPIDEN
-epiden_phase <- diverse_phase %>% filter(SPECIES == 'EPIDEN') %>% na.omit()
+# Overlap ----
 
-ggplot(plafig_phase, aes(x = Date, y = Value, color = Phenophase)) + geom_point() + geom_smooth(alpha = 0.2) +
-  facet_wrap(~PARK) + labs(title = 'PLAFIG Diverse Phenophases over Time',
-                           y = 'Proportion in Phase') + theme_minimal() + 
-  scale_color_manual(values = phase_colors)
+diverse_pheno_sum_24 <- read_rds("diverse_phenology_summary_24.rds")
+
+#facet by park
+ggplot(diverse_pheno_sum_24) +
+  geom_segment(aes(
+    x = onset_fl, xend = offset_fl,
+    y = SPECIES, yend = SPECIES,
+    color = "FL"
+  ), size = 3) +
+  geom_segment(aes(
+    x = onset_fr, xend = offset_fr,
+    y = SPECIES, yend = SPECIES,
+    color = "FR"
+  ), size = 3, alpha = 0.6) +
+  scale_color_manual(values = c("FL" = "#17BEBB", "FR" = "#F5BB00")) +
+  facet_wrap(~PARK) +
+  labs(
+    x = "Day of Year",
+    y = "Species",
+    color = "Phenophase",
+    title = "Flowering and Fruiting Periods"
+  ) +
+  theme_minimal()
+
+#facet by species
+ggplot(diverse_pheno_sum_24) +
+  geom_segment(aes(
+    x = onset_fl, xend = offset_fl,
+    y = PARK, yend = PARK,
+    color = "FL"
+  ), size = 3) +
+  geom_segment(aes(
+    x = onset_fr, xend = offset_fr,
+    y = PARK, yend = PARK,
+    color = "FR"
+  ), size = 3, alpha = 0.6) +
+  scale_color_manual(values = c("FL" = "#17BEBB", "FR" = "#F5BB00")) +
+  facet_wrap(~SPECIES) +
+  labs(
+    x = "Day of Year",
+    y = "Species",
+    color = "Phenophase",
+    title = "Flowering & Fruiting Periods"
+  ) +
+  theme_minimal()
+
+# alone
+ggplot(alone_onset_24, aes(x = onset, y = SPECIES, fill = PARK)) + geom_col(position = 'dodge') +
+  theme_minimal() + scale_fill_manual(values = park_colors)
+
+# diverse 
+ggplot(diverse_onset_24, aes(x = onset, y = SPECIES, fill = PARK)) + geom_col(position = 'dodge') +
+  theme_minimal() + scale_fill_manual(values = park_colors) + labs(title = 'diverse')
+diverse_offset_24 <- diverse_offset_24 %>%
+  mutate(Date = as.Date(offset - 1, origin = as.Date("2024-01-01")))
 
 
 #ONSET FECUNDITY ----
+fitness_24 <- read.csv("24_fitness.csv") %>%
+    select(1:18) %>%
+    rename(c(PLOT_TYPE = PLOT, 
+             PLOT = PLOT.1)) %>%
+    filter(!grepl("gone", NOTES, ignore.case = TRUE))
 
-colnames(fitness_25)
-colnames(ff_heights_25)
+ff_heights_24 <- read.csv("24_ff_heights.csv") %>%
+   rename(c(PLOT_TYPE = PLOT, 
+            FFHEIGHT = HEIGHT,
+            FFDATE = DATEFF)) 
+
+colnames(fitness_24)
+colnames(ff_heights_24)
 
 onset_fec <- left_join(
-  fitness_25,
-  ff_heights_25,
+  fitness_24,
+  ff_heights_24,
   by = c("PARK", "PLOT_TYPE", "SPECIES", "REP")) %>% 
   select(PARK, PLOT_TYPE, SPECIES, REP, HEIGHT, FINALSEED, FFDATE, FFHEIGHT) %>%
   drop_na(FINALSEED, FFDATE, FFHEIGHT) %>%
   mutate(FFDATE = mdy(FFDATE),
          doy = yday(FFDATE)) 
 
-# onset_fec_zoom <- onset_fec %>%
-#   mutate(FINALSEED = if_else(
-#     (SPECIES %in% c("EPIDEN") & FINALSEED > 7500) | (SPECIES %in% c("PLECON") & FINALSEED > 1000),
-#     NA, FINALSEED
-#   )) %>% 
-#   drop_na(FINALSEED)
-# 
-# ggplot(onset_fec_zoom, aes(x = doy, y = FINALSEED, color = PARK)) + 
-#   scale_color_manual(values = park_colors) +
-#   geom_point() + 
-#   geom_smooth(se = FALSE) +
-#   facet_wrap(~SPECIES, scales = "free") +
-#   labs(
-#     x = "FF Day of Year",
-#     y = "Fecundity"
-#   ) + theme_minimal()
-  
 CLAPUR <- onset_fec %>% filter(SPECIES == "CLAPUR") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
   geom_point(aes(shape = PLOT_TYPE)) +
-  stat_smooth(formula = y ~ x + I(x^2)) +
+  geom_smooth(method = "loess", span = 1) +
   facet_wrap(~PARK, scales = "free") +
   scale_color_manual(values = park_colors) +
   labs(
-         x = "FF Day of Year",
-         y = "Fecundity",
-         title = "CLAPUR") + 
+    x = "FF Day of Year",
+    y = "Fecundity",
+    title = "CLAPUR") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_clapur_25.jpeg", plot = CLAPUR, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_clapur_25.jpeg", plot = CLAPUR, width = 8, height = 6, dpi = 300)
 
 COLLIN <- onset_fec %>% filter(SPECIES == "COLLIN") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -267,7 +301,7 @@ COLLIN <- onset_fec %>% filter(SPECIES == "COLLIN") %>%
     title = "COLLIN") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_collin_25.jpeg", plot = COLLIN, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_collin_25.jpeg", plot = COLLIN, width = 8, height = 6, dpi = 300)
 
 GILCAP <- onset_fec %>% filter(SPECIES == "GILCAP") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -281,7 +315,7 @@ GILCAP <- onset_fec %>% filter(SPECIES == "GILCAP") %>%
     title = "GILCAP") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_gilcap_25.jpeg", plot = GILCAP, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_gilcap_25.jpeg", plot = GILCAP, width = 8, height = 6, dpi = 300)
 
 COLLOM <- onset_fec %>% filter(SPECIES == "COLLOM") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -295,7 +329,7 @@ COLLOM <- onset_fec %>% filter(SPECIES == "COLLOM") %>%
     title = "COLLOM") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_collom_25.jpeg", plot = COLLOM, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_collom_25.jpeg", plot = COLLOM, width = 8, height = 6, dpi = 300)
 
 PLECON <- onset_fec %>% filter(SPECIES == "PLECON") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -309,7 +343,7 @@ PLECON <- onset_fec %>% filter(SPECIES == "PLECON") %>%
     title = "PLECON") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_plecon_25.jpeg", plot = PLECON, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_plecon_25.jpeg", plot = PLECON, width = 8, height = 6, dpi = 300)
 
 NAVSQU <- onset_fec %>% filter(SPECIES == "NAVSQU") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -323,7 +357,7 @@ NAVSQU <- onset_fec %>% filter(SPECIES == "NAVSQU") %>%
     title = "NAVSQU") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_navsqu_25.jpeg", plot = NAVSQU, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_navsqu_25.jpeg", plot = NAVSQU, width = 8, height = 6, dpi = 300)
 
 EPIDEN <- onset_fec %>% filter(SPECIES == "EPIDEN") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -337,7 +371,7 @@ EPIDEN <- onset_fec %>% filter(SPECIES == "EPIDEN") %>%
     title = "EPIDEN") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_epiden_25.jpeg", plot = EPIDEN, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_epiden_25.jpeg", plot = EPIDEN, width = 8, height = 6, dpi = 300)
 
 PLAFIG <- onset_fec %>% filter(SPECIES == "PLAFIG") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
@@ -351,7 +385,7 @@ PLAFIG <- onset_fec %>% filter(SPECIES == "PLAFIG") %>%
     title = "PLAFIG") + 
   theme_minimal()
 
-ggsave("Data/2025/figures/ff_fitness_plafig_25.jpeg", plot = PLAFIG, width = 8, height = 6, dpi = 300)
+ggsave("figures/ff_fitness_plafig_25.jpeg", plot = PLAFIG, width = 8, height = 6, dpi = 300)
 
 #view plots
 CLAPUR

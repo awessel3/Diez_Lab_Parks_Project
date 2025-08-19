@@ -5,8 +5,8 @@ library(patchwork)
 library(sp)
 library(raster)
 
-setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/2024/data")
-setwd("~/Desktop/Diez_Lab_Parks_Project/2024/data")
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/Data/2024")
+setwd("~/Desktop/Diez_Lab_Parks_Project/Data/2024")
 
 neighbors_br_24 <- read.csv("24_neighbors_br.csv")
 neighbors_rf_24 <- read.csv("24_neighbors_rf.csv")

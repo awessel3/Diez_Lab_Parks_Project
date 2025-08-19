@@ -6,7 +6,7 @@ library(sp)
 library(raster)
 
 
-setwd("~/Desktop/Diez_Lab_Parks_Project/2024/data")
+setwd("~/Desktop/Diez_Lab_Parks_Project/Data/2024")
 
 neighbor_fitness <- read_rds("24_neighbor_fitness.rds")
 
