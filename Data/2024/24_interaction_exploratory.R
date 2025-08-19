@@ -50,4 +50,5 @@ for (nativex in all_of(competitors)) {
          wrapped, width = 25, height = 12, dpi = 300)
 } 
 
+is.na(neighbor_fitness$PLAFIG) <- 0
 
