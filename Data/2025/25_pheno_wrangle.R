@@ -7,10 +7,10 @@ pheno_25 <- read.csv("Data/2025/25_phenology.csv")
 
 
 park_colors <- c(
-  "BR"  = "#955F8E",  # red
-  "RF"  = "#0F9554",  # green
-  "WIR" = "#17BEBB",  # blue
-  "SEM" = "#F5BB00"   # yellow
+  "BR"  = "#D81E5B",  # red
+  "RF"  = "#7DCE82",  # green
+  "WIR" = "#0496FF",  # blue
+  "SEM" = "#F18F01"   # yellow
 )
 
 #data cleaning/wrangling
@@ -36,6 +36,8 @@ new_rows_alone <- expand_grid(
 
 alones_25 <- bind_rows(alones_25, new_rows_alone)
 
+#saveRDS(alones_25, "Data/2025/pheno_25_alone.rds")
+
 #diverse
 diverse_25 <- pheno_25 %>%
   filter(PLOT == "DIVERSE")
@@ -50,6 +52,8 @@ new_rows_diverse <- expand_grid(
   mutate(Value = if_else(Phenophase == "FL", 1, 0))
 
 diverse_25 <- bind_rows(diverse_25, new_rows_diverse)
+
+#saveRDS(diverse_25, "Data/2025/pheno_25_diverse.rds")
 
 onset_alone <- alones_25 %>% 
   filter(Value != 0 & Phenophase == "FL") %>%

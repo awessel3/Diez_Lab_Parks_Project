@@ -5,7 +5,8 @@ library(patchwork)
 library(sp)
 library(raster)
 
-
+#Hailey file path
+setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/Data/2024")
 setwd("~/Desktop/Diez_Lab_Parks_Project/Data/2024")
 
 pheno_24 <- read.csv("24_phenology.csv")
