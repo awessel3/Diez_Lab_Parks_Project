@@ -1,6 +1,7 @@
 library(tidyverse)
 library(lubridate)
 
+#Hailey file path
 setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/2025/data")
 
 br_neighbors <- read.csv("25_neighbors_br.csv") %>%
@@ -42,6 +43,7 @@ fitness_25 <- read.csv("25_fitness.csv") %>%
 #   filter(PLOT_TYPE == "DIVERSE") %>%
 #   drop_na(HEIGHT, FINALFR)
 
+#join fitness and neighborhood data
 neighbor_fitness <- left_join(fitness_25, 
                               neighbors_25, 
                               by = c("PARK", "PLOT_TYPE", "PLOT", "SUBPLOT"), 
@@ -50,13 +52,15 @@ neighbor_fitness <- left_join(fitness_25,
   select(-NOTES, -contains("INFL"), -contains("FR")) %>%
   mutate(PLOT = if_else(PLOT_TYPE == "ALONE", 0L, PLOT))
 
+#replace NAs from species columns with 0 for computation
 neighbor_fitness[, 10:ncol(neighbor_fitness)][is.na(neighbor_fitness[, 10:ncol(neighbor_fitness)])] <- 0
 
+#create a column of the total number of competitors in each neighborhood
 neighbor_fitness$comp_density <- rowSums(neighbor_fitness[, 10:ncol(neighbor_fitness)])
 
 neighbor_fitness <- neighbor_fitness %>% 
-  filter(!(PLOT_TYPE == "DIVERSE" & comp_density == 0)) %>%
-  mutate(comp_density = case_when(PLOT_TYPE == "DIVERSE" ~ comp_density - 1,
+  filter(!(PLOT_TYPE == "DIVERSE" & comp_density == 0)) %>% #filter out neighborhoods in diverse mix that were skipped
+  mutate(comp_density = case_when(PLOT_TYPE == "DIVERSE" ~ comp_density - 1, #subtract one to take out the focal from the competitor count
                                   TRUE ~ comp_density))
 
 saveRDS(neighbor_fitness, file = "25_neighbor_fitness.rds")

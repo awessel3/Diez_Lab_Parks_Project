@@ -1,6 +1,7 @@
 library(tidyverse)
 library(lubridate)
 
+#Hailey file path
 setwd("C:/Users/hmcLD/OneDrive/Desktop/Diez_Lab_Parks_Project/2025/data")
 
 fitness_25 <- read.csv("25_fitness.csv") %>% 
@@ -14,8 +15,8 @@ ff_heights_25 <- read.csv("25_ff_heights.csv") %>%
    rename(c(PLOT_TYPE = PLOT, 
           FFHEIGHT = HEIGHT)) 
 
-pheno_25_alone <- read_rds("pheno_25_alone.rds")
-pheno_25_diverse <- read_rds("pheno_25_diverse.rds")
+pheno_25_alone <- read_rds("pheno_25_alone.rds") #created in pheno wrangle script
+pheno_25_diverse <- read_rds("pheno_25_diverse.rds") #created in pheno wrangle script
 
 park_colors <- c(
   "BR"  = "#D81E5B",  # red
@@ -41,13 +42,14 @@ phase_colors <- c(
 #PHENOPHASE SUMMARIES ----
 
 # alone
+#give each phenophase a column
 alone_phase <- pheno_25_alone %>% pivot_wider(names_from = Phenophase, values_from = Value)
 
 phenophase_cols <- c("B","V","FL","FR")
 alone_phase[phenophase_cols] <- lapply(alone_phase[phenophase_cols], function(x) sapply(x, `[`, 1))
 str(alone_phase)
 
-value_prop <- alone_phase %>%
+value_prop <- alone_phase %>% #find proportion of individuals in each phase
   group_by(PARK, Date, SPECIES) %>%
   summarise(
     B_total = sum(B, na.rm = TRUE),
@@ -68,7 +70,7 @@ value_prop <- value_prop %>%
                names_to = "Phenophase",
                values_to = "Value")
 
-#flowering curves
+##flowering curves ----
 ggplot(alone_phase, aes(x = Date, y = FL)) + geom_point() + geom_smooth() +
   facet_wrap(~SPECIES)
 
@@ -215,6 +217,7 @@ ggplot(plafig_phase, aes(x = Date, y = Value, color = Phenophase)) + geom_point(
 colnames(fitness_25)
 colnames(ff_heights_25)
 
+#combine fitness (seed counts) and first flower heights
 onset_fec <- left_join(
   fitness_25,
   ff_heights_25,
@@ -241,6 +244,7 @@ onset_fec <- left_join(
 #     y = "Fecundity"
 #   ) + theme_minimal()
   
+##onset vs fitness figures ----
 CLAPUR <- onset_fec %>% filter(SPECIES == "CLAPUR") %>%
   ggplot(aes(x = doy, y = FINALSEED, linetype = PLOT_TYPE, color = PARK)) +
   geom_point(aes(shape = PLOT_TYPE)) +
